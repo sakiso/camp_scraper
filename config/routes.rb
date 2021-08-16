@@ -1,6 +1,10 @@
-Rails.application.routes.draw do
-namespace 'api' do
-  namespace 'v1' do
-    resources :posts
+Rails
+  .application
+  .routes
+  .draw do
+    namespace 'api' do
+      namespace 'v1' do
+        get 'check_reservation', to: 'application#index'
+      end
+    end
   end
-end
