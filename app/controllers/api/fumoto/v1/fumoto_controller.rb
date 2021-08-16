@@ -1,4 +1,4 @@
-class Api::V1::ApplicationController < ActionController::API
+class Api::Fumoto::V1::FumotoController < ActionController::API
   def index
     render json: { text: 'this is stub message!' }
     # ふもとっぱら
