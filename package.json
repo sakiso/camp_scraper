@@ -1,0 +1,12 @@
+{
+  "name": "fumoto_scraping",
+  "version": "1.0.0",
+  "description": "fumoto_scraping",
+  "main": "index.js",
+  "author": "sakiso",
+  "license": "MIT",
+  "devDependencies": {
+    "@prettier/plugin-ruby": "^1.6.1",
+    "prettier": "^2.3.2"
+  }
+}
