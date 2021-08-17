@@ -26,16 +26,21 @@ class Api::Fumoto::V1::FumotoController < ActionController::API
         '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[17]/td[3]',
       )
 
-    if reservation_html.to_s.include?('○')
-      reservation_status = '○'
-    elsif reservation_html.to_s.include?('△')
-      reservation_status = '△'
-    elsif reservation_html.to_s.include?('×')
-      reservation_status = '×'
-    else
-      reservation_status = nil
-    end
+    reservation_status = reservation_checker(reservation_html)
 
     render json: { reservation_status: reservation_status }
+  end
+
+  def reservation_checker(reservation_html)
+    if reservation_html.to_s.include?('○')
+      status = '○'
+    elsif reservation_html.to_s.include?('△')
+      status = '△'
+    elsif reservation_html.to_s.include?('×')
+      status = '×'
+    else
+      status = nil
+    end
+    return status
   end
 end
