@@ -19,7 +19,7 @@ class Api::Fumoto::V1::FumotoController < ActionController::API
         '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[31]/td[3]',
     }
 
-    # ふもとっぱら予約状況のURLにPOSTして予約状況のレスポンス取得
+    # ふもとっぱら予約状況のURLにPOSTする準備
     uri = URI.parse('https://fumotoppara.secure.force.com/RS_Top')
     request = Net::HTTP::Post.new(uri)
     request.set_form_data(
@@ -29,7 +29,7 @@ class Api::Fumoto::V1::FumotoController < ActionController::API
     )
     req_options = { use_ssl: uri.scheme == 'https' }
 
-    # スクレイピング実行
+    # POSTリクエストしてスクレイピング実行
     response =
       Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
