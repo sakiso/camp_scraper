@@ -6,16 +6,18 @@ class Api::Fumoto::V1::FumotoController < ActionController::API
     require 'nokogiri'
 
     # 10月の土曜日のXpath定義
-    xpath_10_02 =
-      '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[3]'
-    xpath_10_09 =
-      '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[10]/td[3]'
-    xpath_10_16 =
-      '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[17]/td[3]'
-    xpath_10_23 =
-      '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[24]/td[3]'
-    xpath_10_30 =
-      '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[31]/td[3]'
+    xpaths = {
+      xpath_10_02:
+        '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[3]',
+      xpath_10_09:
+        '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[10]/td[3]',
+      xpath_10_16:
+        '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[17]/td[3]',
+      xpath_10_23:
+        '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[24]/td[3]',
+      xpath_10_30:
+        '/html/body/div[1]/div[2]/div[2]/div[2]/table/tbody/tr[31]/td[3]',
+    }
 
     # ふもとっぱら予約状況のURLにPOSTして予約状況のレスポンス取得
     uri = URI.parse('https://fumotoppara.secure.force.com/RS_Top')
@@ -35,7 +37,7 @@ class Api::Fumoto::V1::FumotoController < ActionController::API
     doc = Nokogiri.HTML(response.body)
 
     # 予約状況を判定しJSONで返却
-    reservation_status = reservation_checker(doc.xpath(xpath_10_16))
+    reservation_status = reservation_checker(doc.xpath(xpaths[:xpath_10_16]))
     render json: { reservation_status: reservation_status }
   end
 
