@@ -1,10 +1,5 @@
 class Api::Asagiri::V1::AsagiriController < ActionController::API
   def index
-    # ライブラリのインポート
-    require 'net/http'
-    require 'uri'
-    require 'nokogiri'
-
     # 10月の土曜日のXPath定義
     xpaths = {
       date_10_02: '/html/body/div[2]/div/div[1]/div/table[3]/tr[2]/td[1]',
@@ -14,44 +9,52 @@ class Api::Asagiri::V1::AsagiriController < ActionController::API
       date_10_30: '/html/body/div[2]/div/div[1]/div/table[3]/tr[2]/td[5]',
     }
 
-    # 朝霧予約状況のURLにGETする準備
-    url = URI.parse('https://www.asagiri-camp.net/reservation.html')
-    request = Net::HTTP::Get.new(url.path)
-    req_options = { use_ssl: url.scheme == 'https' }
+    # 朝霧ジャンボリーの予約状況URL
+    url = 'https://www.asagiri-camp.net/reservation.html'
 
-    # GETしてスクレイピング実行
-    response =
-      Net::HTTP.start(url.host, url.port, req_options) do |http|
-        http.request(request)
-      end
+    asagiri_scraping = CampScraping.new(xpaths: xpaths, url: url)
 
-    # nokogiriでパース
-    doc = Nokogiri.HTML(response.body)
+    asagiri_scraping.get_request_with_https
+    reservation_status = asagiri_scraping.scraping_with_xpaths
 
-    # 予約状況を判定しハッシュ形式で返却
-    reservation_status = {}
-    xpaths.each do |key, value|
-      reservation_status.store(key, reservation_checker(doc.xpath(value)))
-    end
+    # # 朝霧予約状況のURLにGETする準備
+    # url = URI.parse('https://www.asagiri-camp.net/reservation.html')
+    # request = Net::HTTP::Get.new(url.path)
+    # req_options = { use_ssl: url.scheme == 'https' }
+
+    # # GETしてスクレイピング実行
+    # response =
+    #   Net::HTTP.start(url.host, url.port, req_options) do |http|
+    #     http.request(request)
+    #   end
+
+    # # nokogiriでパース
+    # doc = Nokogiri.HTML(response.body)
+
+    # # 予約状況を判定しハッシュ形式で返却
+    # reservation_status = {}
+    # xpaths.each do |key, value|
+    #   reservation_status.store(key, reservation_checker(doc.xpath(value)))
+    # end
 
     # JSON出力
     render json: reservation_status
   end
 
-  # 与えられたHTML要素に予約状況を示す記号が含まれていればその記号を返す
-  # ○と×は似た別の文字があるので表記ゆれ対策している
-  def reservation_checker(reservation_html)
-    html_str = reservation_html.to_s
+  # # 与えられたHTML要素に予約状況を示す記号が含まれていればその記号を返す
+  # # ○と×は似た別の文字があるので表記ゆれ対策している
+  # def reservation_checker(reservation_html)
+  #   html_str = reservation_html.to_s
 
-    if html_str.include?('○') || html_str.include?('◯')
-      status = '○'
-    elsif html_str.include?('△')
-      status = '△'
-    elsif html_str.include?('✕') || html_str.include?('×')
-      status = '×'
-    else
-      status = nil
-    end
-    return status
-  end
+  #   if html_str.include?('○') || html_str.include?('◯')
+  #     status = '○'
+  #   elsif html_str.include?('△')
+  #     status = '△'
+  #   elsif html_str.include?('✕') || html_str.include?('×')
+  #     status = '×'
+  #   else
+  #     status = nil
+  #   end
+  #   return status
+  # end
 end
