@@ -2,11 +2,15 @@ class CampScraping
   def initialize(xpaths:, url:)
     @xpaths = xpaths
     @url = url
-    #accessorはいらない？
   end
 
   def sraping_with_get_request
     get_request_with_https
+    return scraping_with_xpaths
+  end
+
+  def sraping_with_post_request(parameter:)
+    post_request_with_https(parameter: parameter)
     return scraping_with_xpaths
   end
 
@@ -16,7 +20,7 @@ class CampScraping
     require 'net/http'
     require 'uri'
 
-    # 朝霧予約状況のURLにGETする準備
+    # 予約状況のURLにGETする準備
     uri = URI.parse(@url)
     request = Net::HTTP::Get.new(uri.path)
     req_options = { use_ssl: uri.scheme == 'https' }
@@ -28,7 +32,26 @@ class CampScraping
       end
   end
 
+  def post_request_with_https(parameter:)
+    require 'net/http'
+    require 'uri'
+
+    # 予約状況のURLにPOSTする準備
+    uri = URI.parse(@url)
+    request = Net::HTTP::Post.new(uri)
+    request.set_form_data(parameter)
+    req_options = { use_ssl: uri.scheme == 'https' }
+
+    # POST
+    @response =
+      Net::HTTP.start(uri.host, uri.port, req_options) do |http|
+        http.request(request)
+      end
+  end
+
   def scraping_with_xpaths
+    require 'nokogiri'
+
     # nokogiriでパース
     doc = Nokogiri.HTML(@response.body)
 

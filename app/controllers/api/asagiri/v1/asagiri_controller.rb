@@ -12,7 +12,7 @@ class Api::Asagiri::V1::AsagiriController < ActionController::API
     # 朝霧ジャンボリーの予約状況URL
     url = 'https://www.asagiri-camp.net/reservation.html'
 
-    # スクレイピング対象のURLと予約状況が格納されているXpathを渡して、予約状況を取得する
+    # スクレイピング対象のURLと予約状況が格納されているXpathを渡して、予約状況JSONを取得する
     reservation_status =
       CampScraping.new(xpaths: xpaths, url: url).sraping_with_get_request
 
