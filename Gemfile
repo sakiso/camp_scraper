@@ -40,6 +40,8 @@ group :development do
   gem 'spring'
   # フォーマッタ
   gem 'rufo'
+  # 静的解析
+  gem 'solargraph'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
