@@ -1,15 +1,16 @@
-# 関数をいくつか作って、asagiri controllerとfumoto controllerから呼ぶ
-# DRYになるように！
-# ・URLパース〜リクエスト発行 httpレスポンスデータをNOKOGIRIでパースしたdocを返却
-# ・与えられたdoc（NOKOGIRIでHTMLパース済み）とXPATHのハッシュをもとに、マルバツ判定してJSONをかえす
-# ・（上の子モジュール）与えられたHTMLをSTRING変換して、その中に○×△があるか
-
 class CampScraping
   def initialize(xpaths:, url:)
     @xpaths = xpaths
     @url = url
     #accessorはいらない？
   end
+
+  def sraping_with_get_request
+    get_request_with_https
+    return scraping_with_xpaths
+  end
+
+  private
 
   def get_request_with_https
     require 'net/http'
@@ -25,8 +26,6 @@ class CampScraping
       Net::HTTP.start(uri.host, uri.port, req_options) do |http|
         http.request(request)
       end
-
-    return 'get request finished'
   end
 
   def scraping_with_xpaths
@@ -41,10 +40,7 @@ class CampScraping
 
     # 予約状況ハッシュ返却
     return reservation_status
-    return 'scraping finished'
   end
-
-  private
 
   def reservation_checker(reservation_html)
     # 与えられたHTML要素に予約状況を示す記号が含まれていればその記号を返す

@@ -12,49 +12,11 @@ class Api::Asagiri::V1::AsagiriController < ActionController::API
     # 朝霧ジャンボリーの予約状況URL
     url = 'https://www.asagiri-camp.net/reservation.html'
 
-    asagiri_scraping = CampScraping.new(xpaths: xpaths, url: url)
-
-    asagiri_scraping.get_request_with_https
-    reservation_status = asagiri_scraping.scraping_with_xpaths
-
-    # # 朝霧予約状況のURLにGETする準備
-    # url = URI.parse('https://www.asagiri-camp.net/reservation.html')
-    # request = Net::HTTP::Get.new(url.path)
-    # req_options = { use_ssl: url.scheme == 'https' }
-
-    # # GETしてスクレイピング実行
-    # response =
-    #   Net::HTTP.start(url.host, url.port, req_options) do |http|
-    #     http.request(request)
-    #   end
-
-    # # nokogiriでパース
-    # doc = Nokogiri.HTML(response.body)
-
-    # # 予約状況を判定しハッシュ形式で返却
-    # reservation_status = {}
-    # xpaths.each do |key, value|
-    #   reservation_status.store(key, reservation_checker(doc.xpath(value)))
-    # end
+    # スクレイピング対象のURLと予約状況が格納されているXpathを渡して、予約状況を取得する
+    reservation_status =
+      CampScraping.new(xpaths: xpaths, url: url).sraping_with_get_request
 
     # JSON出力
     render json: reservation_status
   end
-
-  # # 与えられたHTML要素に予約状況を示す記号が含まれていればその記号を返す
-  # # ○と×は似た別の文字があるので表記ゆれ対策している
-  # def reservation_checker(reservation_html)
-  #   html_str = reservation_html.to_s
-
-  #   if html_str.include?('○') || html_str.include?('◯')
-  #     status = '○'
-  #   elsif html_str.include?('△')
-  #     status = '△'
-  #   elsif html_str.include?('✕') || html_str.include?('×')
-  #     status = '×'
-  #   else
-  #     status = nil
-  #   end
-  #   return status
-  # end
 end
